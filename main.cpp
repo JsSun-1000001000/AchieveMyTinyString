@@ -33,6 +33,27 @@ namespace W
 			_str = new char[_capacity + 1];//分配新的内存
 			strcpy(_str, s._str);//复制字符串内容
 		}
+		//赋值运算符重载
+		string& operator = (const string& s)
+		{
+			/**
+			* @note 
+			* 1. 自我赋值检查，当对象自己给自己赋值的时候，
+			* 如果没有进行检查，会**先删除对象的内存，然后再试图复制同一个对象的内容**
+			* 这样会导致程序崩溃
+			* 2.释放原有内存，分配新内存前，先释放原有内存，防止内存泄漏
+			* 3.深拷贝防止浅拷贝带来的问题
+			*/
+			if (this != &s)//避免自我赋值
+			{
+				delete[] _str;	//释放原来内存
+				_size = s._size;
+				_capacity = s._capacity;
+				_str = new char[_capacity + 1];//重新分配新内存
+				strcpy(_str, s._str);//复制内容
+			}
+			return *this;
+		}
 		//< 析构函数
 		~string()
 		{
@@ -75,5 +96,11 @@ int main()
 	W::string s("fuck you c++");
 	TestString();
 	std::cout << s.c_str() << std::endl;
+	/////////////////////////////////////
+	W::string s1("you c++");
+	W::string s2("mother xxx");
+	s2 = s1;//调用赋值运算符重载
+	std::cout << s2.c_str() << std::endl;
+
 	return 0;
 }
